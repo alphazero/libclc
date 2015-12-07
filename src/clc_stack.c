@@ -43,6 +43,10 @@ clc_stack_pop (void *const p, uint64_t *rec, uint8_t *rmeta) {
 	return __clc_stack_pop (p, rec, rmeta);
 }
 
+/* REVU (typical for all container _syncs)
+   these sh/could directly invoke their inline peer
+ */
+
 clc_stat 
 clc_stack_push_sync (void*const p, uint64_t rec, uint8_t* rmeta) {
 	clc_sync_op_m (p, __clc_stack_push (p, rec, rmeta));
