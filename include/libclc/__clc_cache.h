@@ -35,6 +35,12 @@
 /* ------------------------------------------------------------------------- */
 /* cache : lru --------------- */
 
+// TODO
+static inline clc_stat 
+__clc_cache_del_lru (void *const p, uint64_t* rec, uint64_t mask, uint8_t *rmeta) {
+	return CLC_ENOTIMPL;
+}
+
 static inline clc_stat 
 __clc_cache_get_lru (void *const p, uint64_t* rec, uint64_t mask, uint8_t *rmeta) {
 
@@ -131,4 +137,29 @@ __clc_cache_putr_lru (void *const p, uint64_t rec, uint64_t mask, uint64_t *rec0
 	return CLC_OK;	
 }
 
+static inline clc_stat
+__clc_cache_put_lru_sync (void *const p, uint64_t rec, uint64_t *rec0, uint8_t *rmeta) {
+	clc_sync_op_m (p,  __clc_cache_put_lru (p, rec, rec0, rmeta) );
+	return r;
+}
+static inline clc_stat
+__clc_cache_putx_lru_sync (void *const p, uint64_t rec, uint64_t mask, uint64_t *rec0, uint8_t *rmeta) {
+	clc_sync_op_m (p,  __clc_cache_putx_lru (p, rec, mask, rec0, rmeta) );
+	return r;
+}
+static inline clc_stat
+__clc_cache_putr_lru_sync (void *const p, uint64_t rec, uint64_t mask, uint64_t *rec0, uint8_t *rmeta) {
+	clc_sync_op_m (p,  __clc_cache_putr_lru (p, rec, mask, rec0, rmeta) );
+	return r;
+}
+static inline clc_stat
+__clc_cache_get_lru_sync (void *const p, uint64_t* rec, uint64_t mask, uint8_t *rmeta) {
+	clc_sync_op_m (p,  __clc_cache_get_lru (p, rec, mask, rmeta) );
+	return r;
+}
+static inline clc_stat
+__clc_cache_del_lru_sync (void *const p, uint64_t* rec, uint64_t mask, uint8_t *rmeta) {
+	clc_sync_op_m (p,  __clc_cache_del_lru (p, rec, mask, rmeta) );
+	return r;
+}
 #endif // __INLINE_CLC_CACHE_H_
