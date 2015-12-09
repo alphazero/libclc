@@ -69,6 +69,11 @@ clc_reset(void *const p) {
 	return __clc_reset (p);
 }
 
+clc_stat
+clc_clear(void *const p) {
+	return __clc_clear (p);
+}
+
 clc_stat 
 clc_init(void *const p) {
 	return __clc_init (p);

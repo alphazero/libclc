@@ -198,8 +198,8 @@ typedef int32_t clc_stat;
 #define CLC_ESTATE          ((clc_stat) -1)
 #define CLC_EALIGNMENT      ((clc_stat) -2)
 #define CLC_EPOINTER        ((clc_stat) -3)
-#define CLC_EARG            ((clc_stat) -4) // REVU: really CLC_ERECORD 
-#define CLC_EKEY            ((clc_stat) -5) // REVU: deprecated?
+#define CLC_EARG            ((clc_stat) -4)
+#define CLC_ESELECTOR       ((clc_stat) -5)
 #define CLC_EINDEX          ((clc_stat) -6)
 #define CLC_ERECORD         ((clc_stat) -7) 
 #define CLC_ENOTIMPL        ((clc_stat) -255) // NOTE if bumping down stat size
@@ -224,8 +224,8 @@ typedef int32_t clc_stat;
 			fprintf((_fd_), "ERR - CLC_EARG - invalid argument - info: %s\n",\
 				   	(_info_));\
 			break;\
-		case CLC_EKEY:\
-			fprintf((_fd_), "ERR - CLC_EKEY - invalid key - info: %s\n",\
+		case CLC_ESELECTOR:\
+			fprintf((_fd_), "ERR - CLC_ESELECTOR - invalid selctor - info: %s\n",\
 				   	(_info_));\
 			break;\
 		case CLC_EINDEX:\
@@ -355,11 +355,16 @@ static const struct clc_rshift rmask_r6_to [8] = {
 	#define clc_assert_recval_m(_rec_)\
 		if((uint64_t)(_rec_) == 0ULL)\
 	        return CLC_ERECORD ;	// was CLC_EARG
+
+	#define clc_assert_key_m(_key_)\
+		if((uint64_t)(_key_) == 0ULL)\
+	        return CLC_ESELECTOR ;	
 	// -------------------------------
 #else
 	#define clc_assert_in_ptr_m(a1)        /* nop */
 	#define clc_assert_alignment_m(a1)     /* nop */
 	#define clc_assert_recval_m(a1)        /* nop */
+	#define clc_assert_key_m(_key_)        /* nop */
 #endif
 
 /* NOTE: 
@@ -388,6 +393,7 @@ static const struct clc_rshift rmask_r6_to [8] = {
 
 extern clc_stat clc_reset (void *const);
 extern clc_stat clc_init (void *const);
+extern clc_stat clc_clear (void *const); /* == init - just name semantics */
 extern clc_stat clc_get (void const*const, uint8_t, uint64_t*, uint8_t*);
 extern clc_stat clc_del (void *const, uint8_t, uint64_t*, uint8_t*);
 extern clc_stat clc_len (void const*const, uint8_t*);

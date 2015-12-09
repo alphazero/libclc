@@ -80,6 +80,11 @@ __clc_init (void *const p) {
 	return CLC_OK;
 }
 
+/* aka init */
+static inline clc_stat 
+__clc_clear (void *const p) { 
+	return __clc_init (p); 
+}
 
 /* ------------------------------------------------------------------------- */
 /* debug support ------------- */

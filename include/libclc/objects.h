@@ -50,6 +50,7 @@
 struct clc_unit_op {
 	clc_stat (* init ) (void * const p);
 	clc_stat (* reset ) (void * const p) ;
+	clc_stat (* clear ) (void * const p) ;
 	clc_stat (* find ) (void * const p, uint64_t rec, uint8_t * rmeta); 
 	clc_stat (* select ) (void * const p, uint64_t rec, uint64_t mask, uint64_t *iter);
 	clc_stat (* len ) (void const * const p, uint8_t * len) ;
@@ -148,6 +149,7 @@ struct libclc {
 static struct libclc const __clc = {
 	.unit.init = __clc_init,
 	.unit.reset = __clc_reset,
+	.unit.clear = __clc_clear,
 	.unit.len = __clc_len,
 	.unit.dump = __clc_dump,
 	.unit.debug = __clc_debug,
@@ -197,6 +199,7 @@ static struct libclc const __clc = {
 static struct libclc const clc = {
 	.unit.init = clc_init,
 	.unit.reset = clc_reset,
+	.unit.clear = clc_clear,
 	.unit.len = clc_len,
 	.unit.dump = clc_dump,
 	.unit.debug = clc_debug,
