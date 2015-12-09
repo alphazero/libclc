@@ -201,6 +201,7 @@ typedef int32_t clc_stat;
 #define CLC_EARG            ((clc_stat) -4) // REVU: really CLC_ERECORD 
 #define CLC_EKEY            ((clc_stat) -5) // REVU: deprecated?
 #define CLC_EINDEX          ((clc_stat) -6)
+#define CLC_ERECORD         ((clc_stat) -7) 
 #define CLC_ENOTIMPL        ((clc_stat) -255) // NOTE if bumping down stat size
 
 // error reporting support
@@ -353,7 +354,7 @@ static const struct clc_rshift rmask_r6_to [8] = {
 
 	#define clc_assert_recval_m(_rec_)\
 		if((uint64_t)(_rec_) == 0ULL)\
-	        return CLC_EARG ;
+	        return CLC_ERECORD ;	// was CLC_EARG
 	// -------------------------------
 #else
 	#define clc_assert_in_ptr_m(a1)        /* nop */
@@ -374,6 +375,10 @@ static const struct clc_rshift rmask_r6_to [8] = {
 #else
 	#define clc_assert_out_ptr_m(a1)       /* nop */
 #endif
+/* ------------------------------------------------------------------------- */
+/* debug macros -------------- */
+
+// TODO: INARGS, etc. -DCLC_DEBUG to flip emit to stderr.
 
 /* ------------------------------------------------------------------------- */
 /* api ----------------------- */
@@ -458,7 +463,8 @@ extern clc_stat clc_map_putx_sync (void*const, uint64_t, uint64_t, uint8_t*);
 /* -------------------------------------------------------------------------*/
 /* cache : lru ---------------*/
 
-extern clc_stat clc_cache_get_lru  (void*const, uint64_t*, uint64_t, uint8_t*);
+extern clc_stat clc_cache_get_lru  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
+extern clc_stat clc_cache_del_lru  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_put_lru  (void*const, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_putx_lru (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_putr_lru (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
@@ -466,12 +472,14 @@ extern clc_stat clc_cache_putr_lru (void*const, uint64_t, uint64_t, uint64_t*, u
 extern clc_stat clc_cache_putr_lru_sync (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_putx_lru_sync (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_put_lru_sync  (void*const, uint64_t, uint64_t*, uint8_t*);
-extern clc_stat clc_cache_get_lru_sync  (void*const, uint64_t*, uint64_t, uint8_t*);
+extern clc_stat clc_cache_get_lru_sync  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
+extern clc_stat clc_cache_del_lru_sync  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 
 /* -------------------------------------------------------------------------*/
 /* cache : fifo ---------------*/
 
-extern clc_stat clc_cache_get_fifo  (void*const, uint64_t*, uint64_t, uint8_t*);
+extern clc_stat clc_cache_get_fifo  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
+extern clc_stat clc_cache_del_fifo  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_put_fifo  (void*const, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_putx_fifo (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_putr_fifo (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
@@ -479,12 +487,14 @@ extern clc_stat clc_cache_putr_fifo (void*const, uint64_t, uint64_t, uint64_t*, 
 extern clc_stat clc_cache_putr_fifo_sync (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_putx_fifo_sync (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_put_fifo_sync  (void*const, uint64_t, uint64_t*, uint8_t*);
-extern clc_stat clc_cache_get_fifo_sync  (void*const, uint64_t*, uint64_t, uint8_t*);
+extern clc_stat clc_cache_get_fifo_sync  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
+extern clc_stat clc_cache_del_fifo_sync  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 
 /* -------------------------------------------------------------------------*/
 /* cache : 2Q ---------------*/
 
-extern clc_stat clc_cache_get_2q  (void*const, uint64_t*, uint64_t, uint8_t*);
+extern clc_stat clc_cache_get_2q  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
+extern clc_stat clc_cache_del_2q  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_put_2q  (void*const, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_putx_2q (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_putr_2q (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
@@ -492,6 +502,7 @@ extern clc_stat clc_cache_putr_2q (void*const, uint64_t, uint64_t, uint64_t*, ui
 extern clc_stat clc_cache_putr_2q_sync (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_putx_2q_sync (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 extern clc_stat clc_cache_put_2q_sync  (void*const, uint64_t, uint64_t*, uint8_t*);
-extern clc_stat clc_cache_get_2q_sync  (void*const, uint64_t*, uint64_t, uint8_t*);
+extern clc_stat clc_cache_get_2q_sync  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
+extern clc_stat clc_cache_del_2q_sync  (void*const, uint64_t, uint64_t, uint64_t*, uint8_t*);
 
 #endif //_LIBCLC_H_ 

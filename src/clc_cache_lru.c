@@ -34,8 +34,13 @@
 /* cache : lru --------------- */
 
 clc_stat 
-clc_cache_get_lru (void *const p, uint64_t* rec, uint64_t mask, uint8_t *rmeta) {
-	return __clc_cache_get_lru (p, rec, mask, rmeta);
+clc_cache_del_lru (void *const p, uint64_t selector, uint64_t mask, uint64_t* rec, uint8_t *rmeta) {
+	return __clc_cache_del_lru (p, selector, mask, rec, rmeta);
+}
+
+clc_stat 
+clc_cache_get_lru (void *const p, uint64_t selector, uint64_t mask, uint64_t* rec, uint8_t *rmeta) {
+	return __clc_cache_get_lru (p, selector, mask, rec, rmeta);
 }
 
 clc_stat 
@@ -58,22 +63,24 @@ clc_cache_putr_lru_sync (void *const p, uint64_t rec, uint64_t mask, uint64_t *r
 	clc_sync_op_m (p, __clc_cache_putr_lru (p, rec, mask, rec0, rmeta));
 	return r;
 }
-
 clc_stat 
 clc_cache_putx_lru_sync (void *const p, uint64_t rec, uint64_t mask, uint64_t *rec0, uint8_t *rmeta) {
 	clc_sync_op_m (p, __clc_cache_putx_lru (p, rec, mask, rec0, rmeta));
 	return r;
 }
-
 clc_stat 
 clc_cache_put_lru_sync (void *const p, uint64_t rec, uint64_t *rec0, uint8_t *rmeta) {
 	clc_sync_op_m (p, __clc_cache_put_lru (p, rec, rec0, rmeta));
 	return r;
 }
-
 clc_stat
-clc_cache_get_lru_sync (void *const p, uint64_t* rec, uint64_t mask, uint8_t *rmeta) {
-	clc_sync_op_m (p, __clc_cache_get_lru (p, rec, mask, rmeta));
+clc_cache_get_lru_sync (void *const p, uint64_t selector, uint64_t mask, uint64_t* rec, uint8_t *rmeta) {
+	clc_sync_op_m (p, __clc_cache_get_lru (p, selector, mask, rec, rmeta));
+	return r;
+}
+clc_stat
+clc_cache_del_lru_sync (void *const p, uint64_t selector, uint64_t mask, uint64_t* rec, uint8_t *rmeta) {
+	clc_sync_op_m (p, __clc_cache_del_lru (p, selector, mask, rec, rmeta));
 	return r;
 }
 

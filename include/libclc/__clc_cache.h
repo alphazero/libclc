@@ -32,22 +32,30 @@
 
 #include "libclc.h"
 
+#include <stdio.h> // TEMP
+
 /* ------------------------------------------------------------------------- */
 /* cache : lru --------------- */
 
 // TODO
 static inline clc_stat 
-__clc_cache_del_lru (void *const p, uint64_t* rec, uint64_t mask, uint8_t *rmeta) {
+__clc_cache_del_lru (void *const p, uint64_t selector, uint64_t mask, 
+		uint64_t* rec, uint8_t *rmeta) 
+{
 	return CLC_ENOTIMPL;
 }
 
 static inline clc_stat 
-__clc_cache_get_lru (void *const p, uint64_t* rec, uint64_t mask, uint8_t *rmeta) {
+__clc_cache_get_lru (void *const p, uint64_t selector, uint64_t mask, 
+		uint64_t* rec, uint8_t *rmeta) 
+{
 
-	register uint64_t const key = *rec & mask;
-	if (key == 0ULL) {
-		return CLC_EKEY; // REVU: careful to only return < 0 errors
-	}
+	// REVU: allow all-zero key bit pattern.
+	// We only care about zero-value records (which are not valid).
+	register uint64_t const key = selector & mask;
+//	if (key == 0ULL) {
+//		return CLC_EKEY; // REVU: careful to only return < 0 errors
+//	}
 
 	clc_assert_in_ptr_m    ( p );
 	clc_assert_alignment_m ( p );
@@ -76,6 +84,7 @@ __clc_cache_put_lru (void *const p, uint64_t rec, uint64_t *rec0, uint8_t *rmeta
 
 	clc_assert_in_ptr_m    ( p );
 	clc_assert_alignment_m ( p );
+	clc_assert_recval_m    ( rec );
 	clc_assert_out_ptr_m   ( rec0 );
 	clc_assert_out_ptr_m   ( rmeta );
 
@@ -96,13 +105,13 @@ __clc_cache_put_lru (void *const p, uint64_t rec, uint64_t *rec0, uint8_t *rmeta
 
 static inline clc_stat 
 __clc_cache_putx_lru (void *const p, uint64_t rec, uint64_t mask, uint64_t *rec0, uint8_t *rmeta) {
-	uint64_t const key = rec & mask;
-	if (key == 0ULL) {
-		return CLC_EKEY; // REVU: careful to only return < 0 errors
-	}
-
 	clc_assert_in_ptr_m    ( p );
 	clc_assert_alignment_m ( p );
+	clc_assert_recval_m    ( rec );
+
+	// REVU: zero-value KEY is OK - we only care about zero-value records
+	uint64_t const key = rec & mask;
+
 	clc_assert_out_ptr_m   ( rec0 );
 	clc_assert_out_ptr_m   ( rmeta );
 
@@ -120,13 +129,14 @@ __clc_cache_putx_lru (void *const p, uint64_t rec, uint64_t mask, uint64_t *rec0
 static inline clc_stat 
 __clc_cache_putr_lru (void *const p, uint64_t rec, uint64_t mask, uint64_t *rec0, uint8_t *rmeta) {
 
-	clc_assert_in_ptr_m    ( p );
-	clc_assert_alignment_m ( p );
-	clc_assert_out_ptr_m   ( rec0 );
-	clc_assert_out_ptr_m   ( rmeta );
+	// REVU: all below are asserted in the put call below.
+//	clc_assert_in_ptr_m    ( p );
+//	clc_assert_alignment_m ( p );
+//	clc_assert_out_ptr_m   ( rec0 );
+//	clc_assert_out_ptr_m   ( rmeta );
 
-	*rec0 = rec;
-	clc_stat const s = __clc_cache_get_lru (p, rec0, mask, rmeta);
+//	*rec0 = rec;
+	clc_stat const s = __clc_cache_get_lru (p, rec, mask, rec0, rmeta);
 	if (s < 0)  {
 		return s;
 	}
@@ -153,13 +163,17 @@ __clc_cache_putr_lru_sync (void *const p, uint64_t rec, uint64_t mask, uint64_t 
 	return r;
 }
 static inline clc_stat
-__clc_cache_get_lru_sync (void *const p, uint64_t* rec, uint64_t mask, uint8_t *rmeta) {
-	clc_sync_op_m (p,  __clc_cache_get_lru (p, rec, mask, rmeta) );
+__clc_cache_get_lru_sync (void *const p, uint64_t key, uint64_t mask, 
+		uint64_t* rec, uint8_t *rmeta) 
+{
+	clc_sync_op_m (p,  __clc_cache_get_lru (p, key, mask, rec, rmeta) );
 	return r;
 }
 static inline clc_stat
-__clc_cache_del_lru_sync (void *const p, uint64_t* rec, uint64_t mask, uint8_t *rmeta) {
-	clc_sync_op_m (p,  __clc_cache_del_lru (p, rec, mask, rmeta) );
+__clc_cache_del_lru_sync (void *const p, uint64_t key, uint64_t mask, 
+		uint64_t* rec, uint8_t *rmeta) 
+{
+	clc_sync_op_m (p,  __clc_cache_del_lru (p, key, mask, rec, rmeta) );
 	return r;
 }
 #endif // __INLINE_CLC_CACHE_H_

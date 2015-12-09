@@ -105,7 +105,8 @@ struct clc_queue_op {
 
 // intrinsic, policy-invariant, caching container semantics.
 struct clc_cache_op {
-	clc_stat (*get)  (void*, uint64_t*, uint64_t, uint8_t*);
+	clc_stat (*get)  (void*, uint64_t, uint64_t, uint64_t*, uint8_t*);
+	clc_stat (*del)  (void*, uint64_t, uint64_t, uint64_t*, uint8_t*);
 	clc_stat (*put)  (void*, uint64_t, uint64_t*, uint8_t*);
 	clc_stat (*putx) (void*, uint64_t, uint64_t, uint64_t*, uint8_t*);
 	clc_stat (*putr) (void*, uint64_t, uint64_t, uint64_t*, uint8_t*);
@@ -177,10 +178,12 @@ static struct libclc const __clc = {
 	// TODO pending REVU
 	/* cache:lru */
 	.cache.lru.get = __clc_cache_get_lru,
+	.cache.lru.del = __clc_cache_del_lru,
 	.cache.lru.put = __clc_cache_put_lru,
 	.cache.lru.putr = __clc_cache_putr_lru,
 	.cache.lru.putx = __clc_cache_putx_lru,
 	.sync.cache.lru.get = __clc_cache_get_lru_sync,
+	.sync.cache.lru.del = __clc_cache_del_lru_sync,
 	.sync.cache.lru.put = __clc_cache_put_lru_sync,
 	.sync.cache.lru.putr = __clc_cache_putr_lru_sync,
 	.sync.cache.lru.putx = __clc_cache_putx_lru_sync,
@@ -224,10 +227,12 @@ static struct libclc const clc = {
 	// TODO pending REVU
 	/* cache:lru */
 	.cache.lru.get = clc_cache_get_lru,
+	.cache.lru.del = clc_cache_del_lru,
 	.cache.lru.put = clc_cache_put_lru,
 	.cache.lru.putr = clc_cache_putr_lru,
 	.cache.lru.putx = clc_cache_putx_lru,
 	.sync.cache.lru.get = clc_cache_get_lru_sync,
+	.sync.cache.lru.del = clc_cache_del_lru_sync,
 	.sync.cache.lru.put = clc_cache_put_lru_sync,
 	.sync.cache.lru.putr = clc_cache_putr_lru_sync,
 	.sync.cache.lru.putx = clc_cache_putx_lru_sync,
