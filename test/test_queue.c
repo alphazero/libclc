@@ -37,7 +37,6 @@
 
 #include "testing.h"
 
-
 ///////////////////////////////////////////////////////////////////////////
 /// CLC-0X7R Queue Ops Test Framework /////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -104,9 +103,9 @@ testrep_t const * test_container (char const * name, struct clc_queue_op queue,
 	while(!done) {
 		const op_spec_t spec = test_sequence[n];
 		clc_stat rs = 0;
-		uint64_t   rec_in = spec.in_arg[0];
-		uint64_t   rec_out = 0; 
-		uint8_t    rmeta_out = 0;
+		uint64_t rec_in = spec.in_arg[0];
+		uint64_t rec_out = 0; 
+		uint8_t  rmeta_out = 0;
 		switch(spec.op) {
 			case ENQ:
 				rs = queue.enqueue (p, rec_in, &rmeta_out);
@@ -203,7 +202,7 @@ const op_spec_t test_sequence_queue [] = {
 
 
 /* --------------------------------------------------------------------- */
-/* void Tests         */
+/* tests              */
 
 static testrep_t const * test_queue (void);
 static testrep_t const * test_queue_inline (void);
