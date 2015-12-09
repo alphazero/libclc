@@ -63,9 +63,7 @@ __clc_reset(void *const p) {
 static inline clc_stat 
 __clc_init (void *const p) {
 
-	clc_assert_in_ptr_m    ( p );
-	clc_assert_alignment_m ( p );
-
+	// NOTE: args asserted in __clc_reset()
 	clc_stat const r = __clc_reset(p);
 	if (clc_is_error_m(r)) 
 		return r;
@@ -80,7 +78,10 @@ __clc_init (void *const p) {
 	return CLC_OK;
 }
 
-/* aka init */
+// REVU: clear is basically delete all.
+//       question is how should this affect the systolic order?
+//       i.o.w. why would we want to maintain a modified (non-init-state)
+//       systolic order but be empty?
 static inline clc_stat 
 __clc_clear (void *const p) { 
 	return __clc_init (p); 
