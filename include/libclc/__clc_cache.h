@@ -52,8 +52,9 @@ __clc_cache_del_lru (void *const p, uint64_t selector, uint64_t mask,
 
 	for(unsigned r=0; r<clc_unitlen_m(p); r++){
 		if( (clc_record_at_m(p, r).image & mask) == key) {
-			*rec = clc_record_at_m (p, r).image;
 			*rmeta = clc_rmeta_at_m (p, r);
+			*rec = clc_record_at_m (p, r).image;
+			clc_record_at_m (p, r).image = 0ULL;
 			clc_shift_dn_m (p, r);
 			clc_cmeta_set_len_m (p, clc_unitlen_m (p) - 1);
 			return CLC_OK;
