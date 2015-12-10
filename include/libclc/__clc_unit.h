@@ -87,7 +87,31 @@ __clc_clear (void *const p) {
 	return __clc_init (p); 
 }
 
-/* ------------------------------------------------------------------------- */
+static inline clc_stat 
+__clc_del (void *const p, uint64_t selector, uint64_t mask, uint64_t* rec, uint8_t* rmeta) {
+	register uint64_t const key = selector & mask;
+	clc_assert_key_m ( key );
+
+	clc_assert_in_ptr_m    ( p );
+	clc_assert_alignment_m ( p );
+	clc_assert_out_ptr_m   ( rec );
+	clc_assert_out_ptr_m   ( rmeta );
+
+	for(unsigned r=0; r<clc_unitlen_m(p); r++){
+		if( (clc_record_at_m(p, r).image & mask) == key) {
+			*rmeta = clc_rmeta_at_m (p, r);
+			*rec = clc_record_at_m (p, r).image;
+			clc_record_at_m (p, r).image = 0ULL;
+			clc_shift_dn_m (p, r);
+			clc_cmeta_set_len_m (p, clc_unitlen_m (p) - 1);
+			return CLC_OK;
+		}
+	}
+	
+	return CLC_NOTFOUND;
+}
+
+	/* ------------------------------------------------------------------------- */
 /* debug support ------------- */
 
 /* internal use only */

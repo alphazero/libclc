@@ -394,6 +394,7 @@ static const struct clc_rshift rmask_r6_to [8] = {
 extern clc_stat clc_reset (void *const);
 extern clc_stat clc_init (void *const);
 extern clc_stat clc_clear (void *const); /* == init - just name semantics */
+
 extern clc_stat clc_get (void const*const, uint8_t, uint64_t*, uint8_t*);
 extern clc_stat clc_del (void *const, uint8_t, uint64_t*, uint8_t*);
 extern clc_stat clc_len (void const*const, uint8_t*);
