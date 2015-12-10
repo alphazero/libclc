@@ -190,9 +190,27 @@ static struct libclc const __clc = {
 	.sync.cache.lru.putr = __clc_cache_putr_lru_sync,
 	.sync.cache.lru.putx = __clc_cache_putx_lru_sync,
 	/* cache:fifo */
-	// TODO
+	.cache.fifo.get = __clc_cache_get_fifo,
+	.cache.fifo.del = __clc_cache_del_fifo,
+	.cache.fifo.put = __clc_cache_put_fifo,
+	.cache.fifo.putr = __clc_cache_putr_fifo,
+	.cache.fifo.putx = __clc_cache_putx_fifo,
+	.sync.cache.fifo.get = __clc_cache_get_fifo_sync,
+	.sync.cache.fifo.del = __clc_cache_del_fifo_sync,
+	.sync.cache.fifo.put = __clc_cache_put_fifo_sync,
+	.sync.cache.fifo.putr = __clc_cache_putr_fifo_sync,
+	.sync.cache.fifo.putx = __clc_cache_putx_fifo_sync,
 	/* cache:fifo */
-	// TODO
+	.cache.q2.get = __clc_cache_get_2q,
+	.cache.q2.del = __clc_cache_del_2q,
+	.cache.q2.put = __clc_cache_put_2q,
+	.cache.q2.putr = __clc_cache_putr_2q,
+	.cache.q2.putx = __clc_cache_putx_2q,
+	.sync.cache.q2.get = __clc_cache_get_2q_sync,
+	.sync.cache.q2.del = __clc_cache_del_2q_sync,
+	.sync.cache.q2.put = __clc_cache_put_2q_sync,
+	.sync.cache.q2.putr = __clc_cache_putr_2q_sync,
+	.sync.cache.q2.putx = __clc_cache_putx_2q_sync,
 };
 
 /* using inline functions */
@@ -240,9 +258,27 @@ static struct libclc const clc = {
 	.sync.cache.lru.putr = clc_cache_putr_lru_sync,
 	.sync.cache.lru.putx = clc_cache_putx_lru_sync,
 	/* cache:fifo */
-	// TODO
+	.cache.fifo.get = __clc_cache_get_fifo,
+	.cache.fifo.del = __clc_cache_del_fifo,
+	.cache.fifo.put = __clc_cache_put_fifo,
+	.cache.fifo.putr = __clc_cache_putr_fifo,
+	.cache.fifo.putx = __clc_cache_putx_fifo,
+	.sync.cache.fifo.get = __clc_cache_get_fifo_sync,
+	.sync.cache.fifo.del = __clc_cache_del_fifo_sync,
+	.sync.cache.fifo.put = __clc_cache_put_fifo_sync,
+	.sync.cache.fifo.putr = __clc_cache_putr_fifo_sync,
+	.sync.cache.fifo.putx = __clc_cache_putx_fifo_sync,
 	/* cache:fifo */
-	// TODO
+	.cache.q2.get = __clc_cache_get_2q,
+	.cache.q2.del = __clc_cache_del_2q,
+	.cache.q2.put = __clc_cache_put_2q,
+	.cache.q2.putr = __clc_cache_putr_2q,
+	.cache.q2.putx = __clc_cache_putx_2q,
+	.sync.cache.q2.get = __clc_cache_get_2q_sync,
+	.sync.cache.q2.del = __clc_cache_del_2q_sync,
+	.sync.cache.q2.put = __clc_cache_put_2q_sync,
+	.sync.cache.q2.putr = __clc_cache_putr_2q_sync,
+	.sync.cache.q2.putx = __clc_cache_putx_2q_sync,
 };
 
 #endif //_CLC_OBJECTS_H_

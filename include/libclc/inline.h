@@ -43,5 +43,7 @@
 #include "__clc_queue.h"
 #include "__clc_list.h"
 #include "__clc_cache.h"
+#include "__clc_cache_fifo.h"
+#include "__clc_cache_2q.h"
 
 #endif
