@@ -87,8 +87,8 @@ __clc_cache_put_lru (void *const p, uint64_t rec, uint64_t *rec0, uint8_t *rmeta
 	*rec0 = clc_record_at_m (p, 6).image;
 	clc_record_at_m (p, 6).image = rec;
 
+	// REVU: can be hardcoded shift but micro-bench shows no-diffs
 	clc_shift_up_m (p, 6);
-//	*rmeta = clc_rmeta_at_m (p, 0); // NOTE here its a bit slower ..
 
 	if (*rec0 != 0ULL) {
 		return CLC_REMOVED;
@@ -101,25 +101,14 @@ __clc_cache_put_lru (void *const p, uint64_t rec, uint64_t *rec0, uint8_t *rmeta
 static inline clc_stat 
 __clc_cache_putx_lru (void *const p, uint64_t rec, uint64_t mask, uint64_t *rec0, uint8_t *rmeta) {
 
-	clc_assert_in_ptr_m    ( p );
-	clc_assert_alignment_m ( p );
-	clc_assert_recval_m    ( rec );
-
-	uint64_t const key = rec & mask;
-	clc_assert_key_m ( key );
-
-	clc_assert_out_ptr_m   ( rec0 );
-	clc_assert_out_ptr_m   ( rmeta );
-
-	for(unsigned r=0; r<clc_unitlen_m(p); r++){
-		if( (clc_record_at_m(p, r).image & mask) == key) {
-			*rec0 = clc_record_at_m (p, r).image;
-			*rmeta = clc_rmeta_at_m (p, r);
-			return CLC_DUPLICATE;
-		}
+	// NOTE: duplicate key is promoted to LRU regardless
+	clc_stat const s = __clc_cache_get_lru (p, rec, mask, rec0, rmeta);
+	if (s == CLC_NOTFOUND)  {
+		return __clc_cache_put_lru (p, rec, rec0, rmeta);	
+		return CLC_OK;
 	}
-	
-	return __clc_cache_put_lru (p, rec, rec0, rmeta);	
+
+	return CLC_DUPLICATE;
 }
 
 static inline clc_stat 
@@ -130,8 +119,8 @@ __clc_cache_putr_lru (void *const p, uint64_t rec, uint64_t mask, uint64_t *rec0
 		return s;
 	}
 
+	// REVU: just update rec is OK. rec0 & rmeta set by the get call
 	clc_record_at_m (p, 0).image = rec;
-	*rmeta = clc_rmeta_at_m (p, 0);
 
 	return CLC_OK;	
 }
