@@ -255,42 +255,7 @@ const op_spec_t test_sequence_LRU [] = {
 /*   34 */ { PUT,  { 0xcc00a0, 0    }, { 0xa60005 }, 0  , CLC_REMOVED   }, 
 /*   35 */ { PUT,  { 0xcc00a0, 0    }, { 0xa70006 }, 6  , CLC_REMOVED   }, 
 /*   36 */ { PUT,  { 0xcc00a0, 0    }, { 0xa40003 }, 2  , CLC_REMOVED   }, 
-/*   -- */ { _ORD, { 0       , 0    }, { 0        }, 0  , 0             },
 /*   37 */ { GET,  { 0xa70006, mask }, { 0        }, 0  , CLC_NOTFOUND  }, 
-/*   -- */ { _ORD, { 0       , 0    }, { 0        }, 0  , 0             },
-#if DONE
-/*    1 */ { PUT,  { 0x0b, 0x00b0 }, { 0,    0      }, CLC_OK },
-/*    2 */ { PUT,  { 0x0c, 0x00c0 }, { 0,    0      }, CLC_OK },
-/*    3 */ { PUTX, { 0x0c, 0x00cc }, { 0,    0x00c0 }, CLC_EDUPKEY },
-/*    4 */ { GET,  { 0x0f },         { 0,    0      }, CLC_NOTFOUND },
-/*    5 */ { PUT,  { 0x0d, 0x00d0 }, { 0,    0      }, CLC_OK },
-/*    6 */ { PUT,  { 0x0e, 0x00e0 }, { 0,    0      }, CLC_OK },
-/*    7 */ { PUT,  { 0x0f, 0x00f0 }, { 0,    0      }, CLC_OK },
-/*    8 */ { PUT,  { 0x1a, 0x01a0 }, { 0,    0      }, CLC_OK },
-/*    9 */ { GET,  { 0x0f },         { 0,    0x00f0 }, CLC_OK },       
-/*   10 */ { PUT,  { 0x1b, 0x01b0 }, { 0x0a, 0x00a0 }, CLC_REMOVED },
-/*   11 */ { GET,  { 0x0c },         { 0,    0x00c0 }, CLC_OK },       
-/*   12 */ { PUT,  { 0x1c, 0x01c0 }, { 0x0b, }, CLC_REMOVED },
-/*   13 */ { PUT,  { 0x1d, 0x01d0 }, { 0x0d, 0x00d0 }, CLC_REMOVED },
-/*   14 */ { GET,  { 0x0e },         { 0,    0x00e0 }, CLC_OK },       
-/*   15 */ { PUT,  { 0x1e, 0x01e0 }, { 0x1a, 0x01a0 }, CLC_REMOVED },
-/*   16 */ { PUT,  { 0,    0x01e0 }, { 0,    0      }, CLC_EINVKEY }, // once is enough
-/*   17 */ { DEL,  { 0x0f},          { 0,    0x00f0 }, CLC_OK },  
-/*   18 */ { PUT,  { 0x1f, 0x01f0 }, { 0,    0      }, CLC_OK },     
-/*   19 */ { DEL,  { 0x1f},          { 0,    0x01f0 }, CLC_OK },  
-/* note: if ok to this point its working but let's check dup put and get results */
-/*       just put same key with different vals and do a fianl get.               */
-/*   20 */ { PUT,  { 0xaa, 0x01aa }, { 0,    0      }, CLC_OK },     
-/*   21 */ { PUT,  { 0xaa, 0x02aa }, { 0x1b, 0x1b0  }, CLC_REMOVED },
-/*   22 */ { PUT,  { 0xaa, 0x03aa }, { 0x0c, 0x0c0  }, CLC_REMOVED },
-/*   23 */ { PUT,  { 0xaa, 0x04aa }, { 0x1c, 0x1c0  }, CLC_REMOVED },
-/*   24 */ { PUT,  { 0xaa, 0x05aa }, { 0x1d, 0x1d0  }, CLC_REMOVED },
-/*   25 */ { PUT,  { 0xaa, 0x06aa }, { 0x0e, 0x0e0  }, CLC_REMOVED },
-/*   26 */ { PUT,  { 0xaa, 0x07aa }, { 0x1e, 0x1e0  }, CLC_REMOVED },
-/*   27 */ { GET,  { 0xaa },         { 0,    0x07aa }, CLC_OK },       
-/* REVU: PUT semantics are still problematic as subsequent PUT of (any) keys will*/
-/*       removed stale values for 0xaa and that is not good. should we keep PUT? */
-#endif
 /*   -- */ { _ORD, { 0       , 0    }, { 0        }, 0  , 0             },
 /*   -- */ { _END, { 0       , 0    }, { 0        }, 0  , 0             }
 };
@@ -300,6 +265,29 @@ const op_spec_t test_sequence_LRU [] = {
 ///////////////////////////////////////////////////////////////////////////
 
 const op_spec_t test_sequence_FIFO [] = {
+// TEST note these are all same DUP value
+/*    0 */ { PUT,  { 0x0     , 0    }, { 0        }, 0  , CLC_ERECORD   }, 
+/*    1 */ { PUT,  { 0x0a00a0, 0    }, { 0        }, 6  , CLC_OK        }, 
+/*    2 */ { PUT,  { 0x0a00a0, 0    }, { 0        }, 5  , CLC_OK        }, 
+/*    3 */ { PUT,  { 0x0a00a0, 0    }, { 0        }, 4  , CLC_OK        }, 
+/*    4 */ { PUT,  { 0x0a00a0, 0    }, { 0        }, 3  , CLC_OK        }, 
+/*    5 */ { PUT,  { 0x0a00a0, 0    }, { 0        }, 2  , CLC_OK        }, 
+/*    6 */ { PUT,  { 0x0a00a0, 0    }, { 0        }, 1  , CLC_OK        }, 
+/*    7 */ { PUT,  { 0x0a00a0, 0    }, { 0        }, 0  , CLC_OK        }, 
+// TEST we should be at full capacity at this point
+/*    8 */ { PUT,  { 0x0a00a0, 0    }, { 0x0a00a0 }, 6  , CLC_REMOVED   }, 
+// TEST ok DEL the rest but first check for CLC_ESELECTOR on zero key
+//      + spot check force NOTFOUND with a wrong selector
+/*    9 */ { DEL  ,{ 0,        0    }, { 0        }, 0  , CLC_ESELECTOR },
+/*   10 */ { DEL  ,{ 0x0a0000, mask }, { 0x0a00a0 }, 6  , CLC_OK        },
+/*   11 */ { DEL  ,{ 0x0a0000, mask }, { 0x0a00a0 }, 0  , CLC_OK        },
+/*   12 */ { DEL  ,{ 0xcc0000, mask }, { 0        }, 0  , CLC_NOTFOUND  },
+/*   13 */ { DEL  ,{ 0x0a0000, mask }, { 0x0a00a0 }, 1  , CLC_OK        },
+/*   14 */ { DEL  ,{ 0x0a0000, mask }, { 0x0a00a0 }, 2  , CLC_OK        },
+/*   15 */ { DEL  ,{ 0x0a0000, mask }, { 0x0a00a0 }, 3  , CLC_OK        },
+/*   16 */ { DEL  ,{ 0x0a0000, mask }, { 0x0a00a0 }, 4  , CLC_OK        },
+/*   17 */ { DEL  ,{ 0x0a0000, mask }, { 0x0a00a0 }, 5  , CLC_OK        },
+/*   -- */ { _ORD, { 0       , 0    }, { 0        }, 0  , 0             },
 // seqnum            key   val         k0    v0        stat
 /* check: fifo order                                        */
 #if DONE
@@ -371,9 +359,9 @@ const op_spec_t test_sequence_2Q [] = {
 
 static testrep_t const * test_cache_lru         (void);
 static testrep_t const * test_cache_lru_inline  (void);
-#if DONE
 static testrep_t const * test_cache_fifo        (void);
 static testrep_t const * test_cache_fifo_inline (void);
+#if DONE
 static testrep_t const * test_cache_2q          (void);
 static testrep_t const * test_cache_2q_inline   (void);
 #endif
@@ -387,7 +375,6 @@ static testrep_t const * test_cache_lru (void)
 	/* NOTE uses clc objects */
 	return test_container ("clc_cache <LRU>", clc.cache.lru, test_sequence_LRU);
 }
-#if DONE
 static testrep_t const * test_cache_fifo_inline (void) 
 {
 	/* NOTE uses clc objects */
@@ -398,6 +385,7 @@ static testrep_t const * test_cache_fifo (void)
 	/* NOTE uses clc objects */
 	return test_container ("clc_cache <FIFO>", clc.cache.fifo, test_sequence_FIFO);
 }
+#if DONE
 static testrep_t const * test_cache_2q_inline (void) 
 {
 	/* NOTE uses clc objects */
@@ -409,9 +397,14 @@ static testrep_t const * test_cache_2q (void)
 	return test_container ("clc_cache <2Q>", clc.cache.q2, test_sequence_2Q);
 }
 #endif
-test_fn test_cache_policies[] = {
+test_fn test_cache_lru_policy[] = {
 	test_cache_lru_inline,
 	test_cache_lru,
+	0,
+};
+test_fn test_cache_fifo_policy[] = {
+	test_cache_fifo_inline,
+	test_cache_fifo,
 	0,
 };
 
@@ -428,7 +421,8 @@ typedef struct option_struct {
 int main (int argc, char **argv) {
 	printf("Salaam!\n");
 
-	runsuite("clc_0x7m policies", test_cache_policies);
+	runsuite("clc_cache LRU policy", test_cache_lru_policy);
+	runsuite("clc_cache FIFO policy", test_cache_fifo_policy);
 
 	return 0;
 }
