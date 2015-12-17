@@ -42,7 +42,6 @@ __clc_len (void const * const p, uint8_t * len) {
 	clc_assert_alignment_m ( p );
 	
 	*len = clc_unitlen_m(p);
-	
 	return CLC_OK;	
 }
 
@@ -54,7 +53,7 @@ __clc_reset(void *const p) {
 
 	// don't modify cmeta 
 	for(uint8_t b=0; b<7; b++) {
-		clc_unitptr_m(p)->meta.b[b] = b;
+		clc_unitptr_m(p)->meta.rmeta[b] = b;
 	}
 
 	return CLC_OK;
@@ -68,12 +67,12 @@ __clc_init (void *const p) {
 	if (clc_is_error_m(r)) 
 		return r;
 
-	for(unsigned i=0; i<7; i++) {
+	for(unsigned i=1; i<8; i++) {
 		clc_unitptr_m(p)->rec[i].image = 0ULL;
 	}
 
-	// cmeta 
-	clc_unitptr_m(p)->meta.b[7] = 0;
+	// cmeta - init to f:{0 0 0 0 0} len:0
+	clc_unitptr_m(p)->meta.cmeta = 0;
 
 	return CLC_OK;
 }
@@ -111,7 +110,7 @@ __clc_del (void *const p, uint64_t selector, uint64_t mask, uint64_t* rec, uint8
 	return CLC_NOTFOUND;
 }
 
-	/* ------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------------- */
 /* debug support ------------- */
 
 /* internal use only */

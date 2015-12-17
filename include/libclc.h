@@ -57,7 +57,11 @@
 // array of bytes.
 union clc_record {
 	uint64_t  image;
-	uint8_t   b[ 8 ];
+	uint8_t   b[ 8 ];	// REVU: deprecate this
+	struct {
+		uint8_t cmeta;
+		uint8_t rmeta[7];
+	};
 };
 
 // Unit Container. 
@@ -92,7 +96,7 @@ struct clc_unit {
 
 // C-META : unit container metadata bits
 //
-#define clc_cmeta_offset 7
+#define clc_cmeta_offset 0
 
 // cmeta bit semantics
 
@@ -133,7 +137,7 @@ struct clc_unit {
 #define clc_unitptr_m(_p_) ((struct clc_unit*)(_p_))
 
 // unit container's metadata. 
-#define clc_unit_cmeta_m(_p_)    (clc_unitptr_m(_p_)->meta.b[clc_cmeta_offset])
+#define clc_unit_cmeta_m(_p_)    (clc_unitptr_m(_p_)->meta.cmeta)
 
 // unit container's length (e.g. number of records).
 #define clc_unitlen_m(_p_)       (clc_unit_cmeta_m(_p_) & clc_cmeta_len_mask)
@@ -142,7 +146,7 @@ struct clc_unit {
 // NOTE that record order in RMETA reflects the ordering of records per
 // specific container type semantics, and is NOT a direct index into the
 // clc_unit.rec[] array.
-#define clc_rmeta_at_m(_p_,_r_)  (clc_unitptr_m(_p_)->meta.b[(_r_)])
+#define clc_rmeta_at_m(_p_,_r_)  (clc_unitptr_m(_p_)->meta.rmeta[(_r_)])
 
 // Index of the indicated record's physical posiiton in the clc_unit.rec[].
 #define clc_rec_idx_m(_p_,_r_)   (clc_rmeta_at_m(_p_,_r_) & clc_rmeta_idx_mask)
@@ -256,13 +260,13 @@ struct clc_rshift {
 // shift-up op masks for pivot records (0-6).
 // rmask-up[7] record is pad only and not used. 
 static const struct clc_rshift rmask_up [8] = {
-	{ 0xffffffffffffff00, 0x0000000000000000, 0x00000000000000ff, 0,  }, // nop
-	{ 0xffffffffffff0000, 0x00000000000000ff, 0x000000000000ff00, 8,  },
-	{ 0xffffffffff000000, 0x000000000000ffff, 0x0000000000ff0000, 16, },
-	{ 0xffffffff00000000, 0x0000000000ffffff, 0x00000000ff000000, 24, },
-	{ 0xffffff0000000000, 0x00000000ffffffff, 0x000000ff00000000, 32, },
-	{ 0xffff000000000000, 0x000000ffffffffff, 0x0000ff0000000000, 40, },
-	{ 0xff00000000000000, 0x0000ffffffffffff, 0x00ff000000000000, 48, },
+	{ 0xffffffffffff00ff, 0x0000000000000000, 0x000000000000ff00, 0,  }, // nop
+	{ 0xffffffffff0000ff, 0x000000000000ff00, 0x0000000000ff0000, 8,  },
+	{ 0xffffffff000000ff, 0x0000000000ffff00, 0x00000000ff000000, 16, },
+	{ 0xffffff00000000ff, 0x00000000ffffff00, 0x000000ff00000000, 24, },
+	{ 0xffff0000000000ff, 0x000000ffffffff00, 0x0000ff0000000000, 32, },
+	{ 0xff000000000000ff, 0x0000ffffffffff00, 0x00ff000000000000, 40, },
+	{ 0x00000000000000ff, 0x00ffffffffffff00, 0xff00000000000000, 48, },
 	{ 0,0,0,0 },
 };
 /* systolic shift - promote RS[r] to RS[0] */
@@ -277,13 +281,13 @@ static const struct clc_rshift rmask_up [8] = {
 // shift-dn op masks for pivot records (0-6).
 // rmask-up[7] record is pad only and not used. 
 static const struct clc_rshift rmask_dn [8] = {
-	{ 0xff00000000000000, 0x00ffffffffffff00, 0x00000000000000ff, 48, },
-	{ 0xff000000000000ff, 0x00ffffffffff0000, 0x000000000000ff00, 40, },
-	{ 0xff0000000000ffff, 0x00ffffffff000000, 0x0000000000ff0000, 32, },
-	{ 0xff00000000ffffff, 0x00ffffff00000000, 0x00000000ff000000, 24, },
-	{ 0xff000000ffffffff, 0x00ffff0000000000, 0x000000ff00000000, 16, },
-	{ 0xff0000ffffffffff, 0x00ff000000000000, 0x0000ff0000000000, 8,  },
-	{ 0xff00ffffffffffff, 0x0000000000000000, 0x00ff000000000000, 0,  }, // nop
+	{ 0x00000000000000ff, 0xffffffffffff0000, 0x000000000000ff00, 48, },
+	{ 0x000000000000ffff, 0xffffffffff000000, 0x0000000000ff0000, 40, },
+	{ 0x0000000000ffffff, 0xffffffff00000000, 0x00000000ff000000, 32, },
+	{ 0x00000000ffffffff, 0xffffff0000000000, 0x000000ff00000000, 24, },
+	{ 0x000000ffffffffff, 0xffff000000000000, 0x0000ff0000000000, 16, },
+	{ 0x0000ffffffffffff, 0xff00000000000000, 0x00ff000000000000, 8,  },
+	{ 0x00ffffffffffffff, 0x0000000000000000, 0xff00000000000000, 0,  }, // nop
 	{ 0,0,0,0 },
 };
 /* systolic shift - demote RS[r] to RS[6] */ 
@@ -294,15 +298,14 @@ static const struct clc_rshift rmask_dn [8] = {
 	        ( (clc_R0img_m(_p_) & rmask_dn[_r_].m1)) >> 8                  ) | \
 	        ( (clc_R0img_m(_p_) & rmask_dn[_r_].m2 ) << rmask_dn[_r_].shft );  \
 }
-
 static const struct clc_rshift rmask_r6_to [8] = {
-	{ 0xff00000000000000, 0x0000ffffffffffff, 0x00ff000000000000, 48, },
-	{ 0xff000000000000ff, 0x0000ffffffffff00, 0x00ff000000000000, 40, },
-	{ 0xff0000000000ffff, 0x0000ffffffff0000, 0x00ff000000000000, 32, },
-	{ 0xff00000000ffffff, 0x0000ffffff000000, 0x00ff000000000000, 24, },
-	{ 0xff000000ffffffff, 0x0000ffff00000000, 0x00ff000000000000, 16, },
-	{ 0xff0000ffffffffff, 0x0000ff0000000000, 0x00ff000000000000, 8,  },
-	{ 0xff00ffffffffffff, 0x0000000000000000, 0x00ff000000000000, 0,  }, // nop
+	{ 0x00000000000000ff, 0x00ffffffffffff00, 0xff00000000000000, 48, },
+	{ 0x000000000000ffff, 0x00ffffffffff0000, 0xff00000000000000, 40, },
+	{ 0x0000000000ffffff, 0x00ffffffff000000, 0xff00000000000000, 32, },
+	{ 0x00000000ffffffff, 0x00ffffff00000000, 0xff00000000000000, 24, },
+	{ 0x000000ffffffffff, 0x00ffff0000000000, 0xff00000000000000, 16, },
+	{ 0x0000ffffffffffff, 0x00ff000000000000, 0xff00000000000000, 8,  },
+	{ 0x00ffffffffffffff, 0x0000000000000000, 0xff00000000000000, 0,  }, // nop
 	{ 0,0,0,0 },
 };
 /* systolic shift - promote RS[6] to RS[0] */
