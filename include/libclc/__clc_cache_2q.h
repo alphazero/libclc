@@ -30,6 +30,10 @@
 #ifndef __INLINE_CLC_CACHE_2Q_H_
 #define __INLINE_CLC_CACHE_2Q_H_
 
+#ifndef _LIBCLC_INLINE_H_
+#error Do not directly include this header. Only include libclc/inline.h
+#endif
+
 #include "libclc.h"
 
 #include <stdio.h> // TEMP

@@ -28,7 +28,7 @@
  */
 
 #include "libclc.h"
-#include "libclc/__clc_stack.h"
+#include "libclc/inline.h"
 
 /* ------------------------------------------------------------------------- */
 /* container : stack --------- */

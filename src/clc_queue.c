@@ -28,7 +28,7 @@
  */
 
 #include "libclc.h"
-#include "libclc/__clc_queue.h"
+#include "libclc/inline.h"
 
 /* ------------------------------------------------------------------------- */
 /* container : queue --------- */
