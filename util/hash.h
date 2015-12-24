@@ -31,7 +31,7 @@
 #define _CLC_UTIL_HASH_H_
 
 #include <stdbool.h> 
-
+#include <stdint.h>
 /* --------------------------------------------------------------------- */
 /* hash functions ---------- */
 

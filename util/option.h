@@ -31,6 +31,7 @@
 #define _CLC_OPTION_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 
 /* --------------------------------------------------------------------- */
 /* cmdline options util ---- */
