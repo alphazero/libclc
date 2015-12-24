@@ -94,7 +94,7 @@ int run(void) {
 	}
 
 	free (p);
-	return 0;
+	return s;
 }
 #define push_pop_m(p, pre, post, info)\
 {\

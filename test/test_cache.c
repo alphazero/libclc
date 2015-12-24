@@ -187,7 +187,7 @@ testrep_t const * test_container (char const * name, struct clc_cache_op cache,
 				goto done;
 			}
 //		}
-skip_check:		n++;
+		n++;
 	}
 
 	testrep = passed (name);
@@ -204,7 +204,7 @@ done: free(p);
 ///////////////////////////////////////////////////////////////////////////
 
 // For all tests, we'll use the following mask.
-static uint64_t const mask = 0xff0000;
+#define mask (0xff0000ULL)
 
 /* note that we use v0 for GET/DEL whereas API docs call it 'val' */
 const op_spec_t test_sequence_LRU [] = {

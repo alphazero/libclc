@@ -66,7 +66,7 @@ long long dt_usec (long long const t0);
 	const long long dt = dt_usec(_t0_);\
 	const long long dt_nsec = USEC_TO_NSEC(dt);\
 	const double nsperop = NSECS_PER_OP(_opcnt, dt_nsec);\
-	printf("-- timed-ops: %s -- ops:%zd nsec/op:%f usec:%llu\n", _info_, _opcnt, nsperop, dt);\
+	printf("-- timed-ops: %s -- ops:%zd nsec/op:%f usec:%llu\n", _info_, (size_t)_opcnt, nsperop, dt);\
 	}
  
 #define TIME_OPS(_t0_, _opcnt)\
@@ -74,7 +74,7 @@ long long dt_usec (long long const t0);
 	const long long dt = dt_usec(_t0_);\
 	const long long dt_nsec = USEC_TO_NSEC(dt);\
 	const double nsperop = NSECS_PER_OP(_opcnt, dt_nsec);\
-	printf("-- timed-ops: ops:%zd | nsec/op:%9.3f | usec:%6llu\n", _opcnt, nsperop, dt);\
+	printf("-- timed-ops: ops:%zd | nsec/op:%9.3f | usec:%6llu\n", (size_t)_opcnt, nsperop, dt);\
 	}
 
 /* for use with R, etc */
