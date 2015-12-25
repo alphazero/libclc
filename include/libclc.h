@@ -398,12 +398,8 @@ static const struct clc_rshift rmask_r6_to [8] = {
 extern clc_stat clc_reset (void *const);
 extern clc_stat clc_init (void *const);
 extern clc_stat clc_clear (void *const); /* == init - just name semantics */
-
-extern clc_stat clc_get (void const*const, uint8_t, uint64_t*, uint8_t*);
-extern clc_stat clc_del (void *const, uint8_t, uint64_t*, uint8_t*);
-extern clc_stat clc_len (void const*const, uint8_t*);
-extern clc_stat clc_cmeta (void const*const, uint8_t*);
-extern clc_stat clc_rmeta (void const*const, uint8_t, uint8_t*);
+ 
+extern clc_stat clc_len (void const*const unit, uint8_t* len);
 
 extern void     clc_dump (FILE *restrict, void const*const);
 extern void     clc_debug (void const*const);
@@ -411,6 +407,18 @@ extern void     clc_dump_inorder (FILE *restrict, void const*const);
 extern void     clc_debug_inorder (void const*const);
 
 /// STORES ///////////////////////////////////////////////////////////////////
+
+/* -------------------------------------------------------------------------*/
+/* container : generic store -*/
+
+// REVU: not used yet, but anticipated. 
+#ifdef CONCEPTUAL_RESOLVED // REVU: these belong to higher level constructs
+extern clc_stat clc_get_record (void const*const unit, uint8_t index, uint64_t* rec, uint8_t* rmeta);
+extern clc_stat clc_del_reocrd (void *const unit, uint8_t index, uint64_t* rec, uint8_t* rmeta);
+// REVU: add - next available record - typically r@len
+// REUV: get - masked -> first match
+// REVU: select - masked -> all matches
+#endif // CONCEPTUAL_RESOLVED
 
 /* -------------------------------------------------------------------------*/
 /* container : stack ---------*/
