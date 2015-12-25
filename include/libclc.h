@@ -418,9 +418,10 @@ extern clc_stat clc_del_record_sync (void *const, uint8_t, uint64_t*, uint8_t*);
 extern clc_stat clc_get_record_sync (void *const, uint8_t, uint64_t*, uint8_t*);
 // REVU: not used yet, but anticipated. 
 #ifdef CONCEPTUAL_RESOLVED // REVU: these belong to higher level constructs
-// REVU: add - next available record - typically r@len
-// REUV: get - masked -> first match
-// REVU: select - masked -> all matches
+// returns first matching
+extern clc_stat clc_select (void *const, uint64_t, uint64_t, uint64_t*, uint8_t*);
+// returns R0 iterator.
+extern clc_stat clc_select_all (void *const, uint64_t, uint64_t, uint64_t*);
 #endif // CONCEPTUAL_RESOLVED
 
 /* -------------------------------------------------------------------------*/
