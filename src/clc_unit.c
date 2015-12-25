@@ -79,3 +79,22 @@ clc_init(void *const p) {
 	return __clc_init (p);
 }
 
+clc_stat
+clc_del_record(void *const p, uint8_t index, uint64_t* rec, uint8_t* rmeta) {
+	return __clc_del_record(p, index, rec, rmeta);
+}
+
+clc_stat
+clc_get_record_sync(void *const p, uint8_t index, uint64_t* rec, uint8_t* rmeta) {
+	return __clc_get_record_sync (p, index, rec, rmeta);
+}
+
+clc_stat
+clc_del_record_sync(void *const p, uint8_t index, uint64_t* rec, uint8_t* rmeta) {
+	return __clc_del_record_sync (p, index, rec, rmeta);
+}
+
+clc_stat
+clc_get_record(void *const p, uint8_t index, uint64_t* rec, uint8_t* rmeta) {
+	return __clc_get_record(p, index, rec, rmeta);
+}

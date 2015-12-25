@@ -51,8 +51,7 @@ struct clc_unit_op {
 	clc_stat (* init ) (void * const p);
 	clc_stat (* reset ) (void * const p) ;
 	clc_stat (* clear ) (void * const p) ;
-	clc_stat (* find ) (void * const p, uint64_t rec, uint8_t * rmeta); 
-	clc_stat (* select ) (void * const p, uint64_t rec, uint64_t mask, uint64_t *iter);
+
 	clc_stat (* len ) (void const * const p, uint8_t * len) ;
 	clc_stat (* cmeta ) (void const * const p, uint8_t * cmeta) ;
 	clc_stat (* rmeta ) (void const * const p, uint8_t r, uint8_t * rmeta) ;
@@ -60,6 +59,13 @@ struct clc_unit_op {
 	void     (* debug ) (void const * const p);
 	void     (* dump_inorder ) (FILE * restrict out, void const * const p);
 	void     (* debug_inorder ) (void const * const p);
+
+	// generic store content management functions
+	clc_stat (* del_record) (void * const p, uint8_t index, uint64_t * rec, uint8_t * rmeta);
+	clc_stat (* get_record) (void * const p, uint8_t index, uint64_t * rec, uint8_t * rmeta);
+	clc_stat (* find ) (void * const p, uint64_t rec, uint8_t * rmeta); 
+	clc_stat (* select ) (void * const p, uint64_t rec, uint64_t mask, uint64_t *iter);
+	clc_stat (* select_all ) (void * const p, uint64_t rec, uint64_t mask, uint64_t *iter);
 };
 
 /* ------------------------------------------------------------------------- */
@@ -155,6 +161,11 @@ static struct libclc const __clc = {
 	.unit.debug = __clc_debug,
 	.unit.dump_inorder = __clc_dump_inorder,
 	.unit.debug_inorder = __clc_debug_inorder,
+	/* generic store */
+	.unit.del_record = __clc_del_record,
+	.unit.get_record = __clc_get_record,
+	.sync.unit.del_record = __clc_del_record_sync,
+	.sync.unit.get_record = __clc_get_record_sync,
 	/* stack */
 	.stack.push = __clc_stack_push,
 	.stack.pop = __clc_stack_pop,
@@ -223,6 +234,11 @@ static struct libclc const clc = {
 	.unit.debug = clc_debug,
 	.unit.dump_inorder = clc_dump_inorder,
 	.unit.debug_inorder = clc_debug_inorder,
+	/* generic store */
+	.unit.del_record = clc_del_record,
+	.unit.get_record = clc_get_record,
+	.sync.unit.del_record = clc_del_record_sync,
+	.sync.unit.get_record = clc_get_record_sync,
 	/* stack */
 	.stack.push = clc_stack_push,
 	.stack.pop = clc_stack_pop,
@@ -258,27 +274,27 @@ static struct libclc const clc = {
 	.sync.cache.lru.putr = clc_cache_putr_lru_sync,
 	.sync.cache.lru.putx = clc_cache_putx_lru_sync,
 	/* cache:fifo */
-	.cache.fifo.get = __clc_cache_get_fifo,
-	.cache.fifo.del = __clc_cache_del_fifo,
-	.cache.fifo.put = __clc_cache_put_fifo,
-	.cache.fifo.putr = __clc_cache_putr_fifo,
-	.cache.fifo.putx = __clc_cache_putx_fifo,
-	.sync.cache.fifo.get = __clc_cache_get_fifo_sync,
-	.sync.cache.fifo.del = __clc_cache_del_fifo_sync,
-	.sync.cache.fifo.put = __clc_cache_put_fifo_sync,
-	.sync.cache.fifo.putr = __clc_cache_putr_fifo_sync,
-	.sync.cache.fifo.putx = __clc_cache_putx_fifo_sync,
+	.cache.fifo.get = clc_cache_get_fifo,
+	.cache.fifo.del = clc_cache_del_fifo,
+	.cache.fifo.put = clc_cache_put_fifo,
+	.cache.fifo.putr = clc_cache_putr_fifo,
+	.cache.fifo.putx = clc_cache_putx_fifo,
+	.sync.cache.fifo.get = clc_cache_get_fifo_sync,
+	.sync.cache.fifo.del = clc_cache_del_fifo_sync,
+	.sync.cache.fifo.put = clc_cache_put_fifo_sync,
+	.sync.cache.fifo.putr = clc_cache_putr_fifo_sync,
+	.sync.cache.fifo.putx = clc_cache_putx_fifo_sync,
 	/* cache:fifo */
-	.cache.q2.get = __clc_cache_get_2q,
-	.cache.q2.del = __clc_cache_del_2q,
-	.cache.q2.put = __clc_cache_put_2q,
-	.cache.q2.putr = __clc_cache_putr_2q,
-	.cache.q2.putx = __clc_cache_putx_2q,
-	.sync.cache.q2.get = __clc_cache_get_2q_sync,
-	.sync.cache.q2.del = __clc_cache_del_2q_sync,
-	.sync.cache.q2.put = __clc_cache_put_2q_sync,
-	.sync.cache.q2.putr = __clc_cache_putr_2q_sync,
-	.sync.cache.q2.putx = __clc_cache_putx_2q_sync,
+	.cache.q2.get = clc_cache_get_2q,
+	.cache.q2.del = clc_cache_del_2q,
+	.cache.q2.put = clc_cache_put_2q,
+	.cache.q2.putr = clc_cache_putr_2q,
+	.cache.q2.putx = clc_cache_putx_2q,
+	.sync.cache.q2.get = clc_cache_get_2q_sync,
+	.sync.cache.q2.del = clc_cache_del_2q_sync,
+	.sync.cache.q2.put = clc_cache_put_2q_sync,
+	.sync.cache.q2.putr = clc_cache_putr_2q_sync,
+	.sync.cache.q2.putx = clc_cache_putx_2q_sync,
 };
 
 #endif //_CLC_OBJECTS_H_

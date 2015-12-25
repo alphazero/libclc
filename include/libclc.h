@@ -411,10 +411,13 @@ extern void     clc_debug_inorder (void const*const);
 /* -------------------------------------------------------------------------*/
 /* container : generic store -*/
 
+extern clc_stat clc_del_record (void *const, uint8_t, uint64_t*, uint8_t*);
+extern clc_stat clc_get_record (void *const, uint8_t, uint64_t*, uint8_t*);
+
+extern clc_stat clc_del_record_sync (void *const, uint8_t, uint64_t*, uint8_t*);
+extern clc_stat clc_get_record_sync (void *const, uint8_t, uint64_t*, uint8_t*);
 // REVU: not used yet, but anticipated. 
 #ifdef CONCEPTUAL_RESOLVED // REVU: these belong to higher level constructs
-extern clc_stat clc_get_record (void const*const unit, uint8_t index, uint64_t* rec, uint8_t* rmeta);
-extern clc_stat clc_del_reocrd (void *const unit, uint8_t index, uint64_t* rec, uint8_t* rmeta);
 // REVU: add - next available record - typically r@len
 // REUV: get - masked -> first match
 // REVU: select - masked -> all matches

@@ -85,9 +85,20 @@ __clc_init (void *const p) {
 //       question is how should this affect the systolic order?
 //       i.o.w. why would we want to maintain a modified (non-init-state)
 //       systolic order but be empty?
-static inline clc_stat 
+static inline clc_stat
 __clc_clear (void *const p) { 
 	return __clc_init (p); 
+}
+
+static inline clc_stat
+__clc_del_record (void *const p, uint8_t index, uint64_t* rec, uint8_t* rmeta) {
+	return CLC_ENOTIMPL;
+}
+
+static inline clc_stat
+__clc_del_record_sync (void *const p, uint8_t index, uint64_t* rec, uint8_t* rmeta) {
+	clc_sync_op_m (p, __clc_del_record (p, index, rec, rmeta) );
+	return r;
 }
 
 static inline clc_stat 
@@ -112,6 +123,17 @@ __clc_del (void *const p, uint64_t selector, uint64_t mask, uint64_t* rec, uint8
 	}
 	
 	return CLC_NOTFOUND;
+}
+
+static inline clc_stat
+__clc_get_record (void *const p, uint8_t index, uint64_t* rec, uint8_t* rmeta) {
+	return CLC_ENOTIMPL;
+}
+
+static inline clc_stat
+__clc_get_record_sync (void *const p, uint8_t index, uint64_t* rec, uint8_t* rmeta) {
+	clc_sync_op_m (p, __clc_get_record (p, index, rec, rmeta) );
+	return r;
 }
 
 /* ------------------------------------------------------------------------- */
