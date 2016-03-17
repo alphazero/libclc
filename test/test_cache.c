@@ -165,23 +165,27 @@ testrep_t const * test_container (char const * name, struct clc_cache_op cache,
 				testrep = failed (name, "TEST-BUG: unknown OP!");
 				goto done;
 		}
-		fprintf(stderr, "** n:[%d] rs:%d rmeta:%d\n", n, rs, rmeta_out);
+//		fprintf(stderr, "*TEMP-DEBUG* n:[%d] rs:%08x spec.stat:%08x rmeta:%d\n", 
+//				n, rs, spec.stat, rmeta_out);
 		if (rs != spec.stat) {
-			fprintf(stderr, "\tspec[%d].stat: have:%d expect:%d\n", n, rs, spec.stat);
+			fprintf(stderr, "\tspec[%d].stat: have:%d expect:%d\n", 
+					n, rs, spec.stat);
 			emit_op_spec(spec);
 			testrep = failed (name, "test result not per spec");
 			goto done;
 		}
 		if (spec.op != LEN) {
 			if (rec_out != spec.out_arg[0]) {
-				printf("\tspec[%d].k0: have:0x%016llx expect:0x%016llx\n", n, rec_out, spec.out_arg[0]);
+				printf("\tspec[%d].k0: have:0x%016llx expect:0x%016llx\n", 
+						n, rec_out, spec.out_arg[0]);
 				emit_op_spec(spec);
 				return failed (name, "test result not per spec");
 			}
 		} 
 //		else { 
 			if (rmeta_out != (uint8_t) spec.out_rmeta) {
-				fprintf(stderr, "\tspec[%d].rmeta: have:%d expect:%d\n", n, rmeta_out, spec.out_rmeta);
+				fprintf(stderr, "\tspec[%d].rmeta: have:%d expect:%d\n", 
+						n, rmeta_out, spec.out_rmeta);
 				emit_op_spec(spec);
 				testrep = failed (name, "test result not per spec");
 				goto done;

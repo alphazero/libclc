@@ -73,7 +73,7 @@ int main(int argc, char ** argv) {
 
 static clc_stat push_pop (void* p);
 static clc_stat push (void* p);
-static clc_stat pop (void* p);
+//static clc_stat pop (void* p); // REVU: how to meaningfully bench this?
 
 int run(void) {
 
@@ -88,6 +88,9 @@ int run(void) {
 		case 'P':
 			s = push (p);
 			break;
+//		case 'p':
+//			s = pop (p);
+//			break;
 		default:
 			fprintf(stderr, "BUG - unknown type %d\n", option.op_type);
 			return -1;
@@ -159,7 +162,4 @@ static clc_stat push (void * p) {
 	push_m (p, __clc_stack, _, "stack push only inline        ");
 	push_m (p, clc_stack, _,   "stack push only function      ");
 	return 0;
-}
-static clc_stat pop (void * p) {
-	return CLC_ENOTIMPL;
 }
