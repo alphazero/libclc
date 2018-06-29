@@ -32,6 +32,7 @@
 
 #include <stdbool.h> 
 #include <stdint.h>
+
 /* --------------------------------------------------------------------- */
 /* hash functions ---------- */
 
@@ -43,26 +44,23 @@
  * Note it sometimes emits 0 value hash 
  * --------------------------------------------------------------------- */
 
-/* hash unsigned 32bit key to usigned 32bit hash. */
+/* hash unsigned 32bit key to unsigned 32bit hash. */
 extern uint32_t tw_hash_u32 (uint32_t k) ;
 
-/* hash unsigned 16bit key to usigned 32bit hash. */
-extern uint32_t tw_hash_u16 (uint16_t ki16) ;
+/* hash unsigned 16bit key to unsigned 32bit hash. */
+extern uint32_t tw_hash_u16 (uint16_t k16) ;
 
-/* hash unsigned 08bit key to usigned 32bit hash. */
+/* hash unsigned 08bit key to unsigned 32bit hash. */
 extern uint32_t tw_hash_u8  (uint8_t k8) ;
 
-/* hash unsigned 32bit key to usigned 32bit hash. */
-extern uint32_t tw_hash_u64 (uint64_t k) ;
-
-/* hash unsigned 64bit key to unsgied 32bit hash. */
-extern uint32_t tw_hash_u64 (uint64_t key) ;
+/* hash unsigned 64bit key to unsigned 64bit hash. */
+extern uint64_t tw_hash_u64 (uint64_t k) ;
 
 /* a bit faster as macro but also included as a function.
  * usage example (typical):
  * 	uint32_t key;
  * 	uint32_t hash = 0;
- * 	HASH_U32 (key, hash);
+ * 	TW_HASH_U32 (key, hash);
  */ 
 #define TW_HASH_U32(_k_, _h_) \
 	{                         \

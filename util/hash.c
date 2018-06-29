@@ -32,6 +32,14 @@
 /* --------------------------------------------------------------------- */
 /* hash functions  --------- */
 
+/* ---------------------------------------------------------------------
+ * tw_hash_<t> funcs.
+ *
+ * Thomas Wang's hash. 
+ * Source (use archive.org) http://www.cris.com/~Ttwang/tech/inthash.htm
+ * Note it sometimes emits 0 value hash 
+ * --------------------------------------------------------------------- */
+
 /* hash -> 32b -> 32b */
 uint32_t clc_tw_hash_u32 (uint32_t key) {
 	key += ~(key << 15);
@@ -70,8 +78,8 @@ uint32_t clc_tw_hash_u8 (uint8_t k8) {
 	return key;
 }
 
-/* hash -> 64b -> 32b */
-uint32_t clc_tw_hash_u64 (uint64_t key) {
+/* hash -> 64b -> 64b */
+uint64_t clc_tw_hash_u64 (uint64_t key) {
 	key += ~(key << 32);
 	key ^=  (key >> 22);
 	key += ~(key << 13);
@@ -81,6 +89,6 @@ uint32_t clc_tw_hash_u64 (uint64_t key) {
 	key += ~(key << 27);
 	key ^=  (key >> 31);
 
-	return (uint64_t) key;
+	return  key;
 }
 								 
