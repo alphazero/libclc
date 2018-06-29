@@ -37,6 +37,19 @@
 /* hash functions ---------- */
 
 /* ---------------------------------------------------------------------
+ * FNV-1a hash functions.
+ * --------------------------------------------------------------------- */
+
+/* FNV-1a 64bit offset-basis */
+#define clc_fnv1a_u64_xof ((uint64_t)0xcbf29ce484222325)
+
+/* FNV-1a 64bit prime */
+#define clc_fnv1a_u64_prime ((uint64_t)0x100000001b3)
+
+/* hash unsigned 64bit key to unsigned 64bit hash */
+extern uint64_t clc_fnv1a_hash_u64 (uint64_t k);
+
+/* ---------------------------------------------------------------------
  * tw_hash_<t> funcs.
  *
  * Thomas Wang's hash. 

@@ -33,6 +33,41 @@
 /* hash functions  --------- */
 
 /* ---------------------------------------------------------------------
+ * FNV-1a hash functions.
+ * --------------------------------------------------------------------- */
+
+/* hash unsigned 64bit key to unsigned 64bit hash */
+uint64_t clc_fnv1a_hash_u64 (uint64_t key) {
+	uint64_t h = clc_fnv1a_u64_xof;
+	
+	h *= clc_fnv1a_u64_prime;
+	h ^= ((uint64_t)(key && 0xff));
+
+	h *= clc_fnv1a_u64_prime;
+	h ^= ((uint64_t)((key >> 8) && 0xff));
+
+	h *= clc_fnv1a_u64_prime;
+	h ^= ((uint64_t)((key >> 16) && 0xff));
+
+	h *= clc_fnv1a_u64_prime;
+	h ^= ((uint64_t)((key >> 24) && 0xff));
+
+	h *= clc_fnv1a_u64_prime;
+	h ^= ((uint64_t)((key >> 32) && 0xff));
+
+	h *= clc_fnv1a_u64_prime;
+	h ^= ((uint64_t)((key >> 40) && 0xff));
+
+	h *= clc_fnv1a_u64_prime;
+	h ^= ((uint64_t)((key >> 48) && 0xff));
+
+	h *= clc_fnv1a_u64_prime;
+	h ^= ((uint64_t)((key >> 56) && 0xff));
+		
+	return h;
+}
+
+/* ---------------------------------------------------------------------
  * tw_hash_<t> funcs.
  *
  * Thomas Wang's hash. 
